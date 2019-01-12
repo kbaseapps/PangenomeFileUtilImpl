@@ -1,10 +1,11 @@
-import pandas
 import os
 import shutil
 import uuid
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from PangenomeAPI.PangenomeAPIClient import PanGenomeAPI
+import pandas
+
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.PangenomeAPIClient import PanGenomeAPI
 
 
 class PangenomeDownload:

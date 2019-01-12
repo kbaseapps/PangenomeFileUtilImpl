@@ -12,10 +12,9 @@ from __future__ import print_function
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
     from baseclient import BaseClient as _BaseClient  # @Reimport
-import time
 
 
 class PanGenomeAPI(object):
@@ -24,29 +23,17 @@ class PanGenomeAPI(object):
             self, url=None, timeout=30 * 60, user_id=None,
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
-            auth_svc='https://kbase.us/services/authorization/Sessions/Login',
-            service_ver='beta',
-            async_job_check_time_ms=100, async_job_check_time_scale_percent=150, 
-            async_job_check_max_time_ms=300000):
+            auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login',
+            service_ver='release'):
         if url is None:
-            raise ValueError('A url is required')
+            url = 'https://kbase.us/services/service_wizard'
         self._service_ver = service_ver
         self._client = _BaseClient(
             url, timeout=timeout, user_id=user_id, password=password,
             token=token, ignore_authrc=ignore_authrc,
             trust_all_ssl_certificates=trust_all_ssl_certificates,
             auth_svc=auth_svc,
-            async_job_check_time_ms=async_job_check_time_ms,
-            async_job_check_time_scale_percent=async_job_check_time_scale_percent,
-            async_job_check_max_time_ms=async_job_check_max_time_ms)
-
-    def _check_job(self, job_id):
-        return self._client._check_job('PanGenomeAPI', job_id)
-
-    def _search_orthologs_from_pangenome_submit(self, params, context=None):
-        return self._client._submit_job(
-             'PanGenomeAPI.search_orthologs_from_pangenome', [params],
-             self._service_ver, context)
+            lookup_url=True)
 
     def search_orthologs_from_pangenome(self, params, context=None):
         """
@@ -74,22 +61,8 @@ class PanGenomeAPI(object):
            tuple of size 3: String, Double, String, parameter "num_found" of
            Long
         """
-        job_id = self._search_orthologs_from_pangenome_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _search_families_from_comparison_genome_submit(self, params, context=None):
-        return self._client._submit_job(
-             'PanGenomeAPI.search_families_from_comparison_genome', [params],
-             self._service_ver, context)
+        return self._client.call_method('PanGenomeAPI.search_orthologs_from_pangenome',
+                                        [params], self._service_ver, context)
 
     def search_families_from_comparison_genome(self, params, context=None):
         """
@@ -115,22 +88,8 @@ class PanGenomeAPI(object):
            "fraction_consistent_annotations" of Double, parameter
            "most_consistent_role" of String, parameter "num_found" of Long
         """
-        job_id = self._search_families_from_comparison_genome_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _search_functions_from_comparison_genome_submit(self, params, context=None):
-        return self._client._submit_job(
-             'PanGenomeAPI.search_functions_from_comparison_genome', [params],
-             self._service_ver, context)
+        return self._client.call_method('PanGenomeAPI.search_families_from_comparison_genome',
+                                        [params], self._service_ver, context)
 
     def search_functions_from_comparison_genome(self, params, context=None):
         """
@@ -157,22 +116,8 @@ class PanGenomeAPI(object):
            parameter "fraction_consistent_families" of Double, parameter
            "most_consistent_family" of String, parameter "num_found" of Long
         """
-        job_id = self._search_functions_from_comparison_genome_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _search_comparison_genome_from_comparison_genome_submit(self, params, context=None):
-        return self._client._submit_job(
-             'PanGenomeAPI.search_comparison_genome_from_comparison_genome', [params],
-             self._service_ver, context)
+        return self._client.call_method('PanGenomeAPI.search_functions_from_comparison_genome',
+                                        [params], self._service_ver, context)
 
     def search_comparison_genome_from_comparison_genome(self, params, context=None):
         """
@@ -197,22 +142,8 @@ class PanGenomeAPI(object):
            "families" of Long, parameter "functions" of Long, parameter
            "num_found" of Long
         """
-        job_id = self._search_comparison_genome_from_comparison_genome_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _compute_summary_from_pangenome_submit(self, params, context=None):
-        return self._client._submit_job(
-             'PanGenomeAPI.compute_summary_from_pangenome', [params],
-             self._service_ver, context)
+        return self._client.call_method('PanGenomeAPI.search_comparison_genome_from_comparison_genome',
+                                        [params], self._service_ver, context)
 
     def compute_summary_from_pangenome(self, params, context=None):
         """
@@ -226,28 +157,9 @@ class PanGenomeAPI(object):
            mapping from String to String, parameter "pangenome_id" of String,
            parameter "genomes" of Long
         """
-        job_id = self._compute_summary_from_pangenome_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
+        return self._client.call_method('PanGenomeAPI.compute_summary_from_pangenome',
+                                        [params], self._service_ver, context)
 
     def status(self, context=None):
-        job_id = self._client._submit_job('PanGenomeAPI.status', 
-            [], self._service_ver, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
+        return self._client.call_method('PanGenomeAPI.status',
+                                        [], self._service_ver, context)
