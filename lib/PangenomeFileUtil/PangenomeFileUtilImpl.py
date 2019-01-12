@@ -2,6 +2,7 @@
 #BEGIN_HEADER
 
 from pprint import pprint
+
 from PangenomeFileUtil.PangenomeFileUtilCore import PangenomeDownload
 
 #END_HEADER
@@ -22,9 +23,9 @@ class PangenomeFileUtil:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.2"
-    GIT_URL = "https://github.com/rsutormin/PangenomeFileUtilImpl"
-    GIT_COMMIT_HASH = "7480370491807308fec0f65fce42ca6abd28ece4"
+    VERSION = "0.0.4"
+    GIT_URL = "git@github.com:kbaseapps/PangenomeFileUtilImpl.git"
+    GIT_COMMIT_HASH = "19d844e1281c373ce6141f17a9ce2f8ff5f4f8c3"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -108,7 +109,7 @@ class PangenomeFileUtil:
         self.pgdnld.validate_params(params, {'input_ref'})
         params['pangenome_ref'] = params['input_ref']
         pg_name, files = self.pgdnld.to_tsv(params)
-        output = self.pgdnld.export(files.values(), pg_name, params)
+        output = self.pgdnld.export(list(files.values()), pg_name, params)
 
         #END export_pangenome_as_tsv_file
 
@@ -135,7 +136,7 @@ class PangenomeFileUtil:
         self.pgdnld.validate_params(params, {'input_ref'})
         params['pangenome_ref'] = params['input_ref']
         pg_name, file = self.pgdnld.to_excel(params)
-        output = self.pgdnld.export(file.values(), pg_name, params)
+        output = self.pgdnld.export(list(file.values()), pg_name, params)
 
         #END export_pangenome_as_excel_file
 

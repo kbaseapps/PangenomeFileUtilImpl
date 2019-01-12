@@ -1,22 +1,17 @@
-import unittest
-import os
 import json
+import os
 import time
-import pandas as pd
-import filecmp
-
+import unittest
+from configparser import ConfigParser
 from os import environ
-try:
-    from ConfigParser import ConfigParser  # py2
-except:
-    from configparser import ConfigParser  # py3
-
 from pprint import pprint
 
-from biokbase.workspace.client import Workspace as workspaceService
-from GenomeAnnotationAPI.GenomeAnnotationAPIClient import GenomeAnnotationAPI
+import pandas as pd
+
 from PangenomeFileUtil.PangenomeFileUtilImpl import PangenomeFileUtil
 from PangenomeFileUtil.PangenomeFileUtilServer import MethodContext
+from installed_clients.GenomeAnnotationAPIClient import GenomeAnnotationAPI
+from installed_clients.WorkspaceClient import Workspace as workspaceService
 
 
 class PangenomeFileUtilTest(unittest.TestCase):
@@ -94,13 +89,16 @@ class PangenomeFileUtilTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
+    def compare_files(self, filepath1, filepath2):
+        self.assertMultiLineEqual(open(filepath1).read(), open(filepath2).read())
+
     def test_to_tsv(self):
         res = self.getImpl().pangenome_to_tsv_file(self.getContext(), {
                 'pangenome_name': self.obj_name,
                 'workspace_name': self.wsName,
             })[0]
-        assert filecmp.cmp(res['genomes_path'], 'data/pangen3_Genomes.tsv')
-        assert filecmp.cmp(res['orthologs_path'], 'data/pangen3_Orthologs.tsv')
+        self.compare_files(res['genomes_path'], 'data/pangen3_Genomes.tsv')
+        self.compare_files(res['orthologs_path'], 'data/pangen3_Orthologs.tsv')
         pprint(res)
         # test bad input
         with self.assertRaises(ValueError):

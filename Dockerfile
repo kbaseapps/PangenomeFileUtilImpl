@@ -1,11 +1,6 @@
-FROM kbase/kbase:sdkbase.latest
+FROM kbase/sdkbase2:python
 MAINTAINER KBase Developer
 # -----------------------------------------
-
-# Fix Python SSL warnings for python < 2.7.9 (system python on Trusty is 2.7.6)
-# https://github.com/pypa/pip/issues/4098
-RUN pip install pip==8.1.2
-RUN pip install --disable-pip-version-check requests requests_toolbelt pyopenssl --upgrade
 
 RUN pip install pandas && \
     pip install openpyxl && \
